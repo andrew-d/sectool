@@ -49,6 +49,20 @@ def register(parser, fname=None):
     return decorator
 
 
+def list_commands(args):
+    print("Valid commands:")
+
+    def walk(node, depth=0):
+        if node.name != '':
+            print(('  ' * depth) + node.name)
+        for v in node.children.values():
+            walk(v, depth + 1)
+
+    walk(_registry)
+_registry.item = (list_commands, None)
+
+
+
 def get_command(args):
     # Since it's not always easy to tell where a command specifier ends and the
     # arguments for the command begin, we have a simple algorithm here:
@@ -63,6 +77,7 @@ def get_command(args):
     #     descending entirely.
 
     curr = _registry
+    i = 0
     for i, arg in enumerate(args):
         if '--' == arg:
             break
