@@ -71,9 +71,12 @@ def get_command(args):
             break
 
         curr = curr.children[arg]
+    else:
+        # If we didn't break out, then we need to increment our count by one,
+        # since there are no more arguments.
+        i += 1
 
     # Extract command and arguments.
-    #i += 1
     command = args[:i]
     args    = args[i:]
 
@@ -81,7 +84,7 @@ def get_command(args):
     # print(args)
 
     # To make error printing nicer, remove any trailing '--'
-    if command[-1] == '--':
+    if len(command) > 0 and command[-1] == '--':
         command = command[:-1]
 
     # When we get here, our current node must have an item.
