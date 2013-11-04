@@ -17,7 +17,7 @@ class Node(object):
 
 
 _SPLIT_RE = re.compile(r'[. ]')
-_registry = Node("")
+_REGISTRY = Node("")
 
 
 def register(parser, fname=None):
@@ -31,7 +31,7 @@ def register(parser, fname=None):
 
         # For each name in the input, walk further down, creating intermediate
         # nodes along the way.
-        n = _registry
+        n = _REGISTRY
         for component in name:
             if component not in n.children:
                 n.children[component] = Node(component)
@@ -55,11 +55,12 @@ def list_commands(args):
     def walk(node, depth=0):
         if node.name != '':
             print(('  ' * depth) + node.name)
-        for v in node.children.values():
+        children = sorted(node.children.items(), key=lambda x: x[0])
+        for _, v in children:
             walk(v, depth + 1)
 
-    walk(_registry)
-_registry.item = (list_commands, None)
+    walk(_REGISTRY)
+_REGISTRY.item = (list_commands, None)
 
 
 
@@ -76,7 +77,7 @@ def get_command(args):
     #   - If at any point, we reach an argument with the value '--', we stop
     #     descending entirely.
 
-    curr = _registry
+    curr = _REGISTRY
     i = 0
     for i, arg in enumerate(args):
         if '--' == arg:
